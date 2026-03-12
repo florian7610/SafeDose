@@ -1,4 +1,5 @@
-import React from 'react';
+"use client";
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Reports() {

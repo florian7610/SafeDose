@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+"use client";
+
+import { useState } from 'react';
 import { AlertTriangle, Search, CheckCircle, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -106,3 +108,4 @@ export default function Interactions() {
     </div>
   );
 }
+

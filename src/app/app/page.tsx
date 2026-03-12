@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function DashboardHome() {
   const stats = [
     { label: 'Active Medications', value: '4' },

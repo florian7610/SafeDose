@@ -1,4 +1,3 @@
-import React from 'react';
 import { User, Bell, Lock, Smartphone } from 'lucide-react';
 
 export default function Settings() {

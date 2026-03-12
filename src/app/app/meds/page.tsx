@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+"use client";
+
+import { useState } from "react";
 
 export default function MedManager() {
   const [searchTerm, setSearchTerm] = useState('');

@@ -3,9 +3,22 @@ import { NavLink, Link, useNavigate } from 'react-router';
 import { LayoutDashboard, Pill, ShieldAlert, BarChart3, Settings, LogOut } from 'lucide-react';
 import { clsx } from 'clsx';
 
+type NavItem = {
+  name: string;
+  path: string;
+  icon: React.ComponentType<{ className?: string }>;
+  end?: boolean;
+  badge?: string;
+};
+
+type NavGroup = {
+  section: string;
+  items: NavItem[];
+};
+
 export default function Sidebar() {
   const navigate = useNavigate();
-  const navItems = [
+  const navItems: NavGroup[] = [
     { section: "DASHBOARD", items: [
       { name: 'Dashboard', path: '/app', icon: LayoutDashboard, end: true }
     ]},

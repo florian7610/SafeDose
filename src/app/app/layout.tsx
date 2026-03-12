@@ -1,7 +1,6 @@
-import React from 'react';
-import { Outlet, Link } from 'react-router';
+import Link from "next/link";
 
-export default function DashboardLayout() {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Simple Top Bar */}
@@ -10,7 +9,7 @@ export default function DashboardLayout() {
           <h1 className="text-xl font-bold text-gray-900">SafeDose</h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">John Doe</span>
-            <Link to="/" className="text-sm text-gray-600 hover:text-gray-900">
+            <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
               Logout
             </Link>
           </div>
@@ -22,25 +21,25 @@ export default function DashboardLayout() {
         <div className="w-64 bg-white border-r border-gray-200 min-h-screen p-4">
           <nav className="space-y-1">
             <Link 
-              to="/app" 
+              href="/app" 
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
             >
               Dashboard
             </Link>
             <Link 
-              to="/app/meds" 
+            href="/app/meds" 
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
             >
               Medications
             </Link>
             <Link 
-              to="/app/reports" 
+              href="/app/reports" 
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
             >
               Reports
             </Link>
             <Link 
-              to="/app/settings" 
+              href="/app/settings" 
               className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded"
             >
               Settings
@@ -49,9 +48,7 @@ export default function DashboardLayout() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-8">
-          <Outlet />
-        </div>
+        <div className="flex-1 p-8">{children}</div>
       </div>
     </div>
   );

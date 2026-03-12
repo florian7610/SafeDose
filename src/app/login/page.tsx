@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router';
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/app');
+    router.push('/app');
   };
 
   return (
@@ -15,7 +18,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <Link to="/" className="text-2xl font-bold text-gray-900">SafeDose</Link>
+          <Link href="/" className="text-2xl font-bold text-gray-900">SafeDose</Link>
           <h2 className="text-3xl font-bold text-gray-900 mt-6 mb-2">
             {isLogin ? 'Welcome Back' : 'Create Account'}
           </h2>

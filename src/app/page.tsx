@@ -1,5 +1,4 @@
-import React from 'react';
-import { Link } from 'react-router';
+import Link from "next/link";
 
 export default function Landing() {
   return (
@@ -9,10 +8,10 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900">SafeDose</h1>
           <div className="flex gap-4">
-            <Link to="/login" className="px-4 py-2 text-gray-600 hover:text-gray-900">
+            <Link href="/login" className="px-4 py-2 text-gray-600 hover:text-gray-900">
               Login
             </Link>
-            <Link to="/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            <Link href="/login" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
               Sign Up
             </Link>
           </div>
@@ -29,7 +28,7 @@ export default function Landing() {
             Track your medications, set reminders, and stay healthy with SafeDose.
           </p>
           <Link 
-            to="/login" 
+            href="/login" 
             className="inline-block px-8 py-3 bg-blue-600 text-white rounded text-lg hover:bg-blue-700"
           >
             Get Started
