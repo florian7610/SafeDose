@@ -1,5 +1,8 @@
+"use client";
+
 import React from 'react';
-import { NavLink, Link, useNavigate } from 'react-router';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Pill, ShieldAlert, BarChart3, Settings, LogOut } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -17,7 +20,8 @@ type NavGroup = {
 };
 
 export default function Sidebar() {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
   const navItems: NavGroup[] = [
     { section: "DASHBOARD", items: [
       { name: 'Dashboard', path: '/app', icon: LayoutDashboard, end: true }
@@ -32,10 +36,17 @@ export default function Sidebar() {
     ]}
   ];
 
+  const isActivePath = (path: string, end?: boolean) => {
+    if (end) {
+      return pathname === path;
+    }
+    return pathname === path || pathname.startsWith(`${path}/`);
+  };
+
   return (
     <div className="w-[230px] bg-[#0A1628] flex flex-col h-screen fixed left-0 top-0 border-r border-white/5 text-slate-400 font-[Outfit]">
       {/* Logo */}
-      <Link to="/" className="p-6 border-b border-white/5 block hover:bg-white/5 transition-colors">
+      <Link href="/" className="p-6 border-b border-white/5 block hover:bg-white/5 transition-colors">
         <div className="font-['Playfair_Display'] text-[#0ABFB8] text-xl font-bold tracking-tight">
           Safe<span className="text-white">Dose</span>
         </div>
@@ -61,13 +72,12 @@ export default function Sidebar() {
             </div>
             <div className="space-y-0.5">
               {group.items.map((item) => (
-                <NavLink
+                <Link
                   key={item.path}
-                  to={item.path}
-                  end={item.end}
-                  className={({ isActive }) => clsx(
+                  href={item.path}
+                  className={clsx(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
-                    isActive 
+                    isActivePath(item.path, item.end)
                       ? "bg-[#0ABFB8]/15 text-[#0ABFB8]" 
                       : "hover:bg-white/5 hover:text-white"
                   )}
@@ -79,7 +89,7 @@ export default function Sidebar() {
                       {item.badge}
                     </span>
                   )}
-                </NavLink>
+                </Link>
               ))}
             </div>
           </div>
@@ -89,7 +99,7 @@ export default function Sidebar() {
       {/* Bottom Actions */}
       <div className="p-4 border-t border-white/5">
         <button 
-          onClick={() => navigate('/')}
+          onClick={() => router.push('/')}
           className="flex items-center gap-3 px-3 py-2 w-full text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors text-sm font-medium"
         >
           <LogOut className="w-4 h-4" />

@@ -1,9 +1,10 @@
-import React from 'react';
+"use client";
+
 import { Bell, Search, Menu } from 'lucide-react';
-import { useLocation } from 'react-router';
+import { usePathname } from 'next/navigation';
 
 export default function Topbar() {
-  const location = useLocation();
+  const pathname = usePathname();
   
   const getPageTitle = (path: string) => {
     switch(true) {
@@ -16,7 +17,7 @@ export default function Topbar() {
     }
   };
 
-  const { title, subtitle } = getPageTitle(location.pathname);
+  const { title, subtitle } = getPageTitle(pathname);
 
   return (
     <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
