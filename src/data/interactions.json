@@ -1,0 +1,20 @@
+[
+  {
+    "id": "int-001",
+    "drugIds": ["med-002", "med-003"],
+    "severity": "HIGH",
+    "summary": "Increased bleeding risk when Lisinopril and Warfarin are taken together.",
+    "recommendation": "Contact your physician and monitor INR closely.",
+    "fdaSource": "https://open.fda.gov/apis/drug/label/",
+    "reviewed": false
+  },
+  {
+    "id": "int-002",
+    "drugIds": ["med-001", "med-004"],
+    "severity": "MODERATE",
+    "summary": "Potential kidney stress for patients with pre-existing renal impairment.",
+    "recommendation": "Schedule routine kidney function review with your care team.",
+    "fdaSource": "https://open.fda.gov/apis/drug/label/",
+    "reviewed": false
+  }
+]
