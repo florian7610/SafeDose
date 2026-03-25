@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FiAlertTriangle, FiSave, FiTrash2 } from "react-icons/fi";
@@ -14,28 +14,27 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [accountDeleted, setAccountDeleted] = useState(false);
+  const defaultProfileValues = useMemo<UpdateUserProfileRequestDto>(
+    () => ({
+      firstName: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      email: user?.email ?? "",
+      role: user?.role ?? "patient",
+    }),
+    [user],
+  );
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<UpdateUserProfileRequestDto>({
-    defaultValues: {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-    },
+    defaultValues: defaultProfileValues,
   });
 
   useEffect(() => {
-    reset({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-    });
-  }, [reset, user]);
+    reset(defaultProfileValues);
+  }, [defaultProfileValues, reset]);
 
   const onSave = handleSubmit((values) => {
     updateUserProfile(values);
