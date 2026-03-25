@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiPackage, FiSettings } from "react-icons/fi";
 import { useAppState } from "@/components/providers/app-state-provider";
 
@@ -26,7 +27,22 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user, interactions } = useAppState();
+  const router = useRouter();
+  const { user, interactions, isAuthLoading } = useAppState();
+
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push("/login");
+    }
+  }, [isAuthLoading, user, router]);
+
+  if (isAuthLoading || !user) {
+    return (
+      <div className="app-layout" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--gray-600)' }}>
+        <p>Loading application...</p>
+      </div>
+    );
+  }
 
   const openAlerts = interactions.filter((item) => !item.reviewed).length;
   const initials = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`;

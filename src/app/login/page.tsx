@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiBarChart2, FiLock, FiShield } from "react-icons/fi";
 
@@ -21,8 +23,35 @@ export default function LoginPage() {
     },
   });
 
-  const onSubmit = handleSubmit(() => {
-    // Validation only; submit integration can be added when auth API is connected.
+  const router = useRouter();
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setIsLoading(true);
+      setErrorMsg("");
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      if (res.ok) {
+        router.push("/dashboard");
+      } else {
+        const errorData = await res.json();
+        setErrorMsg(errorData.message || "Invalid credentials");
+      }
+    } catch (err) {
+      setErrorMsg("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   return (
@@ -88,13 +117,10 @@ export default function LoginPage() {
             {errors.password ? <p className="form-error">{errors.password.message}</p> : null}
           </div>
 
-          <button className="btn btn-teal btn-full" type="submit">
-            Sign In
+          {errorMsg && <p className="form-error" style={{ marginBottom: "1rem", color: "#f87171" }}>{errorMsg}</p>}
+          <button className="btn btn-teal btn-full" type="submit" disabled={isLoading}>
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
-
-          <Link href="/dashboard" className="btn btn-outline btn-full" style={{ textAlign: "center" }}>
-            Continue to Dashboard
-          </Link>
 
           <p className="auth-switch">
             No account yet? <Link href="/register">Register</Link>

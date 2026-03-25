@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FiAlertTriangle, FiCheckCircle, FiPackage } from "react-icons/fi";
 
@@ -28,8 +30,37 @@ export default function RegisterPage() {
     },
   });
 
-  const onSubmit = handleSubmit(() => {
-    // Validation only; submit integration can be added when auth API is connected.
+  const router = useRouter();
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setIsLoading(true);
+      setErrorMsg("");
+
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          password: data.password,
+        }),
+      });
+
+      if (res.ok) {
+        router.push("/login?registered=true");
+      } else {
+        const errorData = await res.json();
+        setErrorMsg(errorData.message || "Registration failed");
+      }
+    } catch (err) {
+      setErrorMsg("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   });
 
   return (
@@ -128,13 +159,10 @@ export default function RegisterPage() {
             {errors.confirmPassword ? <p className="form-error">{errors.confirmPassword.message}</p> : null}
           </div>
 
-          <button className="btn btn-teal btn-full" type="submit">
-            Create Account
+          {errorMsg && <p className="form-error" style={{ marginBottom: "1rem", color: "#f87171" }}>{errorMsg}</p>}
+          <button className="btn btn-teal btn-full" type="submit" disabled={isLoading}>
+            {isLoading ? "Creating Account..." : "Create Account"}
           </button>
-
-          <Link href="/dashboard" className="btn btn-outline btn-full" style={{ textAlign: "center" }}>
-            Continue to Dashboard
-          </Link>
 
           <p className="auth-switch">
             Already registered? <Link href="/login">Sign in</Link>

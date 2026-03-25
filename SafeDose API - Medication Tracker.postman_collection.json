@@ -1,0 +1,166 @@
+{
+  "info": {
+    "_postman_id": "b242675d-b98b-496b-9660-dd4ded68f665",
+    "name": "SafeDose Routes - Next.js",
+    "description": "HTTP route collection aligned with the current SafeDose Next.js App Router project. Note: backend API endpoints are not implemented yet in this repository.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50587900",
+    "_collection_link": "https://go.postman.co/collection/50587900-b242675d-b98b-496b-9660-dd4ded68f665?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "App Routes",
+      "item": [
+        {
+          "name": "Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dashboard Home",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/app",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "app"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Medications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/app/meds",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "app",
+                "meds"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Interactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/app/interactions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "app",
+                "interactions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/app/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "app",
+                "reports"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/app/settings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "app",
+                "settings"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    }
+  ]
+}
