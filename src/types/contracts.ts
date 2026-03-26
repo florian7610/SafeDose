@@ -7,7 +7,7 @@ export interface UserEntity {
   firstName: string;
   lastName: string;
   email: string;
-  role: "patient" | "caregiver";
+  role: "admin" | "patient";
 }
 
 export interface MedicationEntity {
@@ -75,7 +75,7 @@ export interface UpdateUserProfileRequestDto {
   firstName: string;
   lastName: string;
   email: string;
-  role: "patient" | "caregiver";
+  role: "admin" | "patient";
 }
 
 export interface UpdateMedicationRequestDto {

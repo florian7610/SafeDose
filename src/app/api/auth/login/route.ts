@@ -26,14 +26,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
     }
 
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
+    // Auto-promote to admin role if email matches ADMIN_EMAIL
+    if (ADMIN_EMAIL && user.email === ADMIN_EMAIL.toLowerCase() && user.role !== "admin") {
+      await user.updateOne({ role: "admin" });
+      user.role = "admin";
+    }
+
     const token = jwt.sign(
-      { userId: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName },
+      { userId: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName, role: user.role },
       JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     const response = NextResponse.json(
-      { message: "Logged in successfully", user: { id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email } },
+      { message: "Logged in successfully", user: { id: user._id, firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role } },
       { status: 200 }
     );
 

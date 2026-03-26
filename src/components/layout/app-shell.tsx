@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiPackage, FiSettings } from "react-icons/fi";
+import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiPackage, FiSettings, FiShield } from "react-icons/fi";
 import { useAppState } from "@/components/providers/app-state-provider";
 
 const navItems = [
@@ -90,6 +90,16 @@ export function AppShell({
             </Link>
           ))}
         </nav>
+
+        {user.role === "admin" && (
+          <div style={{ padding: "0 12px 8px" }}>
+            <div className="sb-section-lbl">Admin</div>
+            <Link href="/admin" className={isCurrent(pathname, "/admin") ? "sb-link active" : "sb-link"} style={{ color: "#f59e0b" }}>
+              <span className="sb-icon"><FiShield /></span>
+              <span>Admin Panel</span>
+            </Link>
+          </div>
+        )}
 
         <div className="sb-bottom">
           <Link className="sb-link" href="/">

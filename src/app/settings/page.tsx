@@ -99,7 +99,7 @@ export default function SettingsPage() {
               <label htmlFor="role">Account Role</label>
               <select id="role" className="settings-select" {...register("role")}>
                 <option value="patient">Patient</option>
-                <option value="caregiver">Caregiver</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
 

@@ -30,7 +30,7 @@ export async function GET() {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: "patient",
+        role: user.role ?? "patient",
       }
     }, { status: 200 });
   } catch (error) {
