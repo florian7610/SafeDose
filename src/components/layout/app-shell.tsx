@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiPackage, FiSettings, FiShield } from "react-icons/fi";
+import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiPackage, FiSearch, FiSettings, FiShield } from "react-icons/fi";
 import { useAppState } from "@/components/providers/app-state-provider";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/meds", label: "My Medications" },
+  { href: "/drugs", label: "Drug Directory" },
   { href: "/interactions", label: "Safety Center" },
   { href: "/settings", label: "Settings" },
 ];
@@ -77,6 +78,8 @@ export function AppShell({
                   <FiGrid />
                 ) : item.href === "/meds" ? (
                   <FiPackage />
+                ) : item.href === "/drugs" ? (
+                  <FiSearch />
                 ) : item.href === "/interactions" ? (
                   <FiAlertTriangle />
                 ) : (
