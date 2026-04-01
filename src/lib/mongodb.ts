@@ -10,7 +10,7 @@ if (!cached) {
 
 async function connectToDatabase() {
   if (!MONGODB_URI) {
-    throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
+    throw new Error("Missing MONGODB_URI. Set it in .env for local development and in Vercel Project Settings > Environment Variables for deployments.");
   }
 
   if (cached.conn) {
