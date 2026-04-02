@@ -51,6 +51,7 @@ body {
   font-family: var(--font-body), sans-serif;
   color: var(--gray800);
   background: var(--gray50);
+  overflow: hidden;
 }
 
 a {
@@ -509,6 +510,7 @@ a {
 }
 
 .form-grp input,
+.form-grp select,
 .search-bar input,
 .int-search-bar input {
   width: 100%;
@@ -518,9 +520,11 @@ a {
   background: var(--gray50);
   color: var(--gray800);
   outline: none;
+  appearance: none;
 }
 
 .form-grp input:focus,
+.form-grp select:focus,
 .search-bar input:focus,
 .int-search-bar input:focus {
   border-color: var(--teal);

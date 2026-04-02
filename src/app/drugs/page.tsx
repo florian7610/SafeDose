@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiPackage } from "react-icons/fi";
 import { AppShell } from "@/components/layout/app-shell";
+import { CaregiverShell } from "@/components/layout/caregiver-shell";
+import { useAppState } from "@/components/providers/app-state-provider";
 import type { DrugCatalogPage } from "@/lib/openfda";
 
 const PAGE_SIZE = 12;
@@ -16,6 +18,7 @@ const emptyCatalog: DrugCatalogPage = {
 };
 
 export default function DrugsPage() {
+  const { user } = useAppState();
   const [catalog, setCatalog] = useState<DrugCatalogPage>(emptyCatalog);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,8 +66,8 @@ export default function DrugsPage() {
   const rangeStart = catalog.totalResults === 0 ? 0 : (catalog.page - 1) * catalog.pageSize + 1;
   const rangeEnd = catalog.totalResults === 0 ? 0 : Math.min(catalog.page * catalog.pageSize, catalog.totalResults);
 
-  return (
-    <AppShell title="Drug Directory" subtitle="Browse paginated FDA drug labels powered by openFDA">
+  const content = (
+    <>
       <section className="card-box" style={{ marginBottom: "20px" }}>
         <div className="section-hdr">
           <h3>OpenFDA Catalog</h3>
@@ -156,6 +159,20 @@ export default function DrugsPage() {
           <FiChevronRight />
         </button>
       </div>
+    </>
+  );
+
+  if (user?.role === "caregiver") {
+    return (
+      <CaregiverShell title="Drug Directory" subtitle="Browse paginated FDA drug labels powered by openFDA">
+        {content}
+      </CaregiverShell>
+    );
+  }
+
+  return (
+    <AppShell title="Drug Directory" subtitle="Browse paginated FDA drug labels powered by openFDA">
+      {content}
     </AppShell>
   );
 }

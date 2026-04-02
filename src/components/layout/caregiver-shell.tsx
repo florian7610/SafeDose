@@ -1,62 +1,56 @@
-// src/components/layout/app-shell.tsx
+// src/components/layout/caregiver-shell.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import {
-  FiAlertTriangle,
   FiBell,
-  FiGrid,
   FiLogOut,
-  FiPackage,
   FiSearch,
   FiSettings,
   FiShield,
+  FiUsers,
 } from "react-icons/fi";
-import { usePatientState } from "@/components/providers/app-state-provider";
+import { useCaregiverState } from "@/components/providers/app-state-provider";
 
 const navItems = [
-  { href: "/patient-dashboard",               label: "Dashboard",       icon: "grid"     },
-  { href: "/patient-dashboard/medications",   label: "My Medications",  icon: "package"  },
-  { href: "/drugs",                           label: "Drug Directory",  icon: "search"   },
-  { href: "/patient-dashboard/interactions",  label: "Safety Center",   icon: "alert"    },
-  { href: "/settings",                        label: "Settings",        icon: "settings" },
+  { href: "/caregiver-dashboard",          label: "My Patients",    icon: <FiUsers /> },
+  { href: "/drugs",                         label: "Drug Directory", icon: <FiSearch /> },
+  { href: "/caregiver-dashboard/settings",                      label: "Settings",       icon: <FiSettings /> },
 ];
 
-export function AppShell({
+export function CaregiverShell({
   title,
   subtitle,
   children,
-  allowedRoles,
 }: {
   title: string;
   subtitle: string;
   children: React.ReactNode;
-  allowedRoles?: Array<"admin" | "patient" | "caregiver">;
 }) {
   const pathname = usePathname();
   const router   = useRouter();
-  const { user, interactions, isAuthLoading } = usePatientState();
+  const { user, isAuthLoading, caregiverDashboard } = useCaregiverState();
 
   useEffect(() => {
     if (isAuthLoading) return;
     if (!user) { router.push("/login"); return; }
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
-      router.push(user.role === "caregiver" ? "/caregiver-dashboard" : "/patient-dashboard");
+    if (user.role !== "caregiver" && user.role !== "admin") {
+      router.push("/dashboard");
     }
-  }, [isAuthLoading, user, router, allowedRoles]);
+  }, [isAuthLoading, user, router]);
 
   if (isAuthLoading || !user) {
     return (
       <div className="app-layout" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", color: "var(--gray-600)" }}>
-        <p>Loading application...</p>
+        <p>Loading...</p>
       </div>
     );
   }
 
-  const openAlerts = interactions.filter((i) => !i.reviewed).length;
-  const initials   = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`;
+  const initials      = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`;
+  const alertCount    = caregiverDashboard?.summary.patientsWithAlerts ?? 0;
 
   return (
     <div className="app-layout">
@@ -69,12 +63,12 @@ export function AppShell({
           <div className="sb-avatar">{initials}</div>
           <div>
             <p className="sb-user-name">{user.firstName} {user.lastName}</p>
-            <p className="sb-user-role">{user.role}</p>
+            <p className="sb-user-role">caregiver</p>
           </div>
         </div>
 
         <nav className="sb-nav">
-          <div className="sb-section-lbl">Main</div>
+          <div className="sb-section-lbl">Caregiver</div>
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -86,16 +80,10 @@ export function AppShell({
                 : "sb-link"
               }
             >
-              <span className="sb-icon">
-                {item.icon === "grid"     ? <FiGrid />          :
-                 item.icon === "package"  ? <FiPackage />       :
-                 item.icon === "search"   ? <FiSearch />        :
-                 item.icon === "alert"    ? <FiAlertTriangle /> :
-                                           <FiSettings />}
-              </span>
+              <span className="sb-icon">{item.icon}</span>
               <span>{item.label}</span>
-              {item.icon === "alert" && openAlerts > 0 && (
-                <span className="sb-badge">{openAlerts}</span>
+              {item.href === "/caregiver-dashboard" && alertCount > 0 && (
+                <span className="sb-badge">{alertCount}</span>
               )}
             </Link>
           ))}
@@ -139,7 +127,7 @@ export function AppShell({
           <div className="topbar-right">
             <button className="notif-btn" type="button" aria-label="Notifications">
               <FiBell />
-              {openAlerts > 0 && <span className="notif-dot" />}
+              {alertCount > 0 && <span className="notif-dot" />}
             </button>
             <div className="topbar-avatar">{initials}</div>
           </div>
