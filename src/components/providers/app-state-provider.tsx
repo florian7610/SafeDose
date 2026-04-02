@@ -181,8 +181,9 @@ export function AppStateProvider({ children }: PropsWithChildren) {
         scheduleTime: payload.scheduleTime,
         status:       "active",
         rxcui:        payload.rxcui,
+        dosesPerDay:  payload.frequency === "twice daily" ? 2 : payload.frequency === "three times daily" ? 3 : 1,
+        takenIndices: [],
         takenToday:   false,
-        takenDate:    null,
         startDate:    payload.startDate ?? new Date().toISOString(),
         endDate:      payload.endDate ?? null,
         isOngoing:    payload.isOngoing ?? true,
@@ -259,7 +260,6 @@ export function AppStateProvider({ children }: PropsWithChildren) {
   const deleteAccount = useCallback(() => {
     setMedications([]);
     setInteractions([]);
-    setPatientProfile(null);
     setUser((prev) => {
       if (!prev) return null;
       return {
@@ -412,5 +412,7 @@ export function useCaregiverState() {
     refreshCaregiverDashboard:ctx.refreshCaregiverDashboard,
     addPatient:               ctx.addPatient,
     removePatient:            ctx.removePatient,
+    updateUserProfile:        ctx.updateUserProfile,
+    deleteAccount:            ctx.deleteAccount,
   };
 }
