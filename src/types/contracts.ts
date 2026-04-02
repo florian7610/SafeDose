@@ -236,6 +236,17 @@ export interface DashboardStatViewModel {
   trendVariant: "up" | "down" | "neutral";
 }
 
+// ─── API contract descriptor ─────────────────────────────────────────────────
+
+export interface ApiEndpointContract {
+  endpoint: string;
+  method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
+  authRequired: boolean;
+  requestDto: string;
+  responseDto: string;
+  statusCodes: { code: number; meaning: string }[];
+}
+
 // ─── Error model ─────────────────────────────────────────────────────────────
 
 export interface StandardErrorModel {
