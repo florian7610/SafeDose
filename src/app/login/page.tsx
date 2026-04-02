@@ -1,3 +1,4 @@
+// src/app/login/page.tsx
 "use client";
 
 import Link from "next/link";
@@ -12,16 +13,8 @@ interface LoginFormValues {
 }
 
 export default function LoginPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const { register, handleSubmit, formState: { errors } } =
+    useForm<LoginFormValues>({ defaultValues: { email: "", password: "" } });
 
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState("");
@@ -35,21 +28,20 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+        body: JSON.stringify({ email: data.email, password: data.password }),
       });
 
       if (res.ok) {
-        const data = await res.json();
-        const role = data.user?.role;
-        router.push(role === "admin" ? "/admin" : "/dashboard");
+        const json = await res.json();
+        const role = json.user?.role;
+        if (role === "admin")      router.push("/admin");
+        else if (role === "caregiver") router.push("/caregiver-dashboard");
+        else                       router.push("/patient-dashboard");
       } else {
-        const errorData = await res.json();
-        setErrorMsg(errorData.message || "Invalid credentials");
+        const err = await res.json();
+        setErrorMsg(err.message || "Invalid credentials");
       }
-    } catch (err) {
+    } catch {
       setErrorMsg("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -60,14 +52,9 @@ export default function LoginPage() {
     <div className="auth-wrapper">
       <section className="auth-left">
         <div className="auth-left-content">
-          <div className="logo">
-            Safe<span>Dose</span>
-          </div>
-          <h2>
-            Welcome back.
-          </h2>
+          <div className="logo">Safe<span>Dose</span></div>
+          <h2>Welcome back.</h2>
           <p>Sign in to review your medications, interactions, and adherence dashboard.</p>
-
           <div className="auth-trust">
             <div className="trust-item">
               <span className="trust-icon"><FiLock /></span>
@@ -96,11 +83,11 @@ export default function LoginPage() {
               id="email"
               type="email"
               {...register("email", {
-                validate: (value) => value.includes("@") || "Enter a valid email address.",
+                validate: (v) => v.includes("@") || "Enter a valid email address.",
               })}
               placeholder="you@example.com"
             />
-            {errors.email ? <p className="form-error">{errors.email.message}</p> : null}
+            {errors.email && <p className="form-error">{errors.email.message}</p>}
           </div>
 
           <div className="form-grp">
@@ -109,19 +96,21 @@ export default function LoginPage() {
               id="password"
               type="password"
               {...register("password", {
-                minLength: {
-                  value: 8,
-                  message: "Password must contain at least 8 characters.",
-                },
+                minLength: { value: 8, message: "Password must be at least 8 characters." },
               })}
               placeholder="Minimum 8 characters"
             />
-            {errors.password ? <p className="form-error">{errors.password.message}</p> : null}
+            {errors.password && <p className="form-error">{errors.password.message}</p>}
           </div>
 
-          {errorMsg && <p className="form-error" style={{ marginBottom: "1rem", color: "#f87171" }}>{errorMsg}</p>}
+          {errorMsg && (
+            <p className="form-error" style={{ marginBottom: "1rem", color: "#f87171" }}>
+              {errorMsg}
+            </p>
+          )}
+
           <button className="btn btn-teal btn-full" type="submit" disabled={isLoading}>
-            {isLoading ? "Signing In..." : "Sign In"}
+            {isLoading ? "Signing in..." : "Sign In"}
           </button>
 
           <p className="auth-switch">

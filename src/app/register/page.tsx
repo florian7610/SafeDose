@@ -12,6 +12,7 @@ interface RegisterFormValues {
   email: string;
   password: string;
   confirmPassword: string;
+  role: "patient" | "caregiver";
 }
 
 export default function RegisterPage() {
@@ -27,6 +28,7 @@ export default function RegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
+      role: "patient",
     },
   });
 
@@ -47,6 +49,7 @@ export default function RegisterPage() {
           lastName: data.lastName,
           email: data.email,
           password: data.password,
+          role: data.role,
         }),
       });
 
@@ -157,6 +160,17 @@ export default function RegisterPage() {
               })}
             />
             {errors.confirmPassword ? <p className="form-error">{errors.confirmPassword.message}</p> : null}
+          </div>
+
+          <div className="form-grp">
+            <label htmlFor="role">I am a</label>
+            <select
+              id="role"
+              {...register("role")}
+            >
+              <option value="patient">Patient</option>
+              <option value="caregiver">Caregiver</option>
+            </select>
           </div>
 
           {errorMsg && <p className="form-error" style={{ marginBottom: "1rem", color: "#f87171" }}>{errorMsg}</p>}

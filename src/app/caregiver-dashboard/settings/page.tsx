@@ -1,17 +1,17 @@
-// src/app/settings/page.tsx
+// src/app/caregiver-dashboard/settings/page.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FiAlertTriangle, FiSave, FiTrash2 } from "react-icons/fi";
-import { AppShell } from "@/components/layout/app-shell";
-import { usePatientState } from "@/components/providers/app-state-provider";
+import { CaregiverShell } from "@/components/layout/caregiver-shell";
+import { useCaregiverState } from "@/components/providers/app-state-provider";
 import type { UpdateUserProfileRequestDto } from "@/types/contracts";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user, updateUserProfile, deleteAccount } = usePatientState();
+  const { user, updateUserProfile, deleteAccount } = useCaregiverState();
   const [saved,          setSaved]          = useState(false);
   const [deleteConfirm,  setDeleteConfirm]  = useState("");
   const [accountDeleted, setAccountDeleted] = useState(false);
@@ -21,7 +21,7 @@ export default function SettingsPage() {
       firstName: user?.firstName ?? "",
       lastName:  user?.lastName  ?? "",
       email:     user?.email     ?? "",
-      role:      user?.role      ?? "patient",
+      role:      user?.role      ?? "caregiver",
     }),
     [user]
   );
@@ -44,7 +44,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <AppShell title="Settings" subtitle="Update your profile and account preferences">
+    <CaregiverShell title="Settings" subtitle="Update your profile and account preferences">
       <section className="settings-grid">
         {/* ── Profile ── */}
         <article className="card-box">
@@ -89,7 +89,7 @@ export default function SettingsPage() {
             <div className="form-grp">
               <label htmlFor="role">Account role</label>
               <select id="role" className="settings-select" {...register("role")}>
-                <option value="patient">Patient</option>
+                <option value="caregiver">Caregiver</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
@@ -138,6 +138,6 @@ export default function SettingsPage() {
           )}
         </article>
       </section>
-    </AppShell>
+    </CaregiverShell>
   );
 }

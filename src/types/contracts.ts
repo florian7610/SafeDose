@@ -1,18 +1,38 @@
-export type MedicationStatus = "active" | "interaction" | "paused";
-export type InteractionSeverity = "HIGH" | "MODERATE" | "LOW";
+// src/types/contracts.ts
+// ─── Status / severity enums ────────────────────────────────────────────────
 
-// Entity models (database level)
+export type MedicationStatus   = "active" | "interaction" | "stopped";
+export type InteractionSeverity = "HIGH" | "MODERATE" | "LOW";
+export type RosterStatus        = "alert" | "warning" | "ok";
+
+// ─── Entity models (mirror DB documents) ────────────────────────────────────
+
 export interface UserEntity {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: "admin" | "patient";
+  role: "admin" | "patient" | "caregiver";
+}
+
+/**
+ * Patient = clinical profile. Exists independently of a login account.
+ * hasAccount is true when linkedUserId is set (i.e. the patient registered).
+ */
+export interface PatientEntity {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  hasAccount: boolean;
+  notes: string;
+  createdAt: string;
 }
 
 export interface MedicationEntity {
   id: string;
-  userId: string;
+  patientId: string;      // Patient._id — never User._id
+  addedBy: string | null; // User._id of whoever created this record
   name: string;
   genericName: string;
   dosage: string;
@@ -20,14 +40,20 @@ export interface MedicationEntity {
   scheduleTime: string;
   status: MedicationStatus;
   rxcui: string;
-  takenToday: boolean;
+  dosesPerDay: number;       // total doses required per occurrence day (1, 2, or 3)
+  takenIndices: number[];    // which dose slots have been taken today (auto-resets at midnight)
+  takenToday: boolean;       // computed: takenIndices.length === dosesPerDay
+  startDate: string;
+  endDate: string | null;  // null when isOngoing
+  isOngoing: boolean;
+  stoppedAt: string | null; // ISO timestamp set when status → "stopped"
   createdAt: string;
   updatedAt: string;
 }
 
 export interface InteractionEntity {
   id: string;
-  userId: string;
+  patientId: string;
   drugIds: string[];
   severity: InteractionSeverity;
   summary: string;
@@ -37,18 +63,35 @@ export interface InteractionEntity {
   createdAt: string;
 }
 
-// Standard error model
-export interface StandardErrorModel {
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, string[]>;
-    traceId: string;
-    timestamp: string;
-  };
+// ─── Caregiver roster ───────────────────────────────────────────────────────
+
+export interface RosterPatient {
+  patientId: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  hasAccount: boolean;       // false = caregiver-managed, no login
+  notes: string;
+  rosterStatus: RosterStatus;
+  activeMedCount: number;
+  takenToday: number;
+  missedToday: number;
+  interactionCount: number;
+  assignedAt: string | null;
 }
 
-// Request DTOs
+export interface CaregiverDashboardResponse {
+  summary: {
+    totalPatients: number;
+    patientsWithAlerts: number;
+    patientsWithWarnings: number;
+    patientsOnTrack: number;
+  };
+  roster: RosterPatient[];
+}
+
+// ─── Request DTOs ────────────────────────────────────────────────────────────
+
 export interface LoginRequestDto {
   email: string;
   password: string;
@@ -60,6 +103,7 @@ export interface RegisterRequestDto {
   email: string;
   password: string;
   confirmPassword: string;
+  role?: "patient" | "caregiver";
 }
 
 export interface CreateMedicationRequestDto {
@@ -69,13 +113,9 @@ export interface CreateMedicationRequestDto {
   frequency: string;
   scheduleTime: string;
   rxcui: string;
-}
-
-export interface UpdateUserProfileRequestDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: "admin" | "patient";
+  startDate: string;       // ISO date string e.g. "2024-01-10"
+  endDate: string | null;  // null when isOngoing
+  isOngoing: boolean;
 }
 
 export interface UpdateMedicationRequestDto {
@@ -84,9 +124,41 @@ export interface UpdateMedicationRequestDto {
   scheduleTime?: string;
   status?: MedicationStatus;
   takenToday?: boolean;
+  startDate?: string;
+  endDate?: string | null;
+  isOngoing?: boolean;
 }
 
-// Response DTOs
+export interface UpdateUserProfileRequestDto {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: "admin" | "patient" | "caregiver";
+}
+
+/**
+ * Create a new unlinked patient profile (no account required).
+ * Used by caregivers for patients who don't use the app themselves.
+ */
+export interface CreatePatientRequestDto {
+  mode: "create";
+  firstName: string;
+  lastName: string;
+  email?: string;
+  dateOfBirth?: string;
+  notes?: string;
+}
+
+/**
+ * Link a caregiver to an existing registered patient by email.
+ */
+export interface LinkPatientRequestDto {
+  mode: "link";
+  email: string;
+}
+
+// ─── Response DTOs ───────────────────────────────────────────────────────────
+
 export interface AuthResponseDto {
   tokenType: "Bearer";
   accessToken: string;
@@ -101,6 +173,8 @@ export interface AuthResponseDto {
 
 export interface MedicationResponseDto {
   id: string;
+  patientId: string;
+  addedBy: string | null;
   name: string;
   genericName: string;
   dosage: string;
@@ -109,10 +183,14 @@ export interface MedicationResponseDto {
   status: MedicationStatus;
   rxcui: string;
   takenToday: boolean;
+  startDate: string;
+  endDate: string | null;
+  isOngoing: boolean;
 }
 
 export interface InteractionResponseDto {
   id: string;
+  patientId: string;
   severity: InteractionSeverity;
   drugNames: string[];
   summary: string;
@@ -128,7 +206,8 @@ export interface DashboardSummaryResponseDto {
   dosesDueToday: number;
 }
 
-// Frontend view models
+// ─── Frontend view models ────────────────────────────────────────────────────
+
 export interface MedicationViewModel {
   id: string;
   title: string;
@@ -157,14 +236,14 @@ export interface DashboardStatViewModel {
   trendVariant: "up" | "down" | "neutral";
 }
 
-export interface ApiEndpointContract {
-  endpoint: string;
-  method: "GET" | "POST" | "PATCH" | "DELETE";
-  authRequired: boolean;
-  requestDto: string;
-  responseDto: string;
-  statusCodes: Array<{
-    code: number;
-    meaning: string;
-  }>;
+// ─── Error model ─────────────────────────────────────────────────────────────
+
+export interface StandardErrorModel {
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, string[]>;
+    traceId: string;
+    timestamp: string;
+  };
 }

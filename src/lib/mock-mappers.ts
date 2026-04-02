@@ -16,7 +16,7 @@ export function toMedicationViewModel(med: MedicationEntity): MedicationViewMode
     badgeText: med.status === "interaction" ? "Interaction" : "Active",
     badgeVariant,
     takenToday: med.takenToday,
-  };
+  };  
 }
 
 export function toInteractionViewModel(

@@ -1,10 +1,15 @@
-// src/app/api/medications/[id]/route.ts
+// src/app/api/caregiver/patients/[patientId]/medications/[medId]/route.ts
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import { requireRole } from "@/lib/auth";
-import Patient from "@/data/models/Patient";
+import Assignment from "@/data/models/Assignment";
 import Medication from "@/data/models/Medication";
 import { dosesPerDay, parseTakenIndices, toggleTakenIndex } from "@/lib/medication-utils";
+
+async function assertAssigned(caregiverId: string, patientId: string) {
+  const a = await Assignment.findOne({ caregiverId, patientId, status: "active" });
+  return !!a;
+}
 
 function todayStr() {
   return new Date().toISOString().split("T")[0];
@@ -38,31 +43,29 @@ function serializeMed(m: any) {
 }
 
 /**
- * PATCH /api/medications/[id]
- *
- * To toggle a single dose:   { doseIndex: 0, taken: true }
- * To update clinical fields: { dosage, frequency, scheduleTime, status, startDate, endDate, isOngoing }
- * status "stopped" automatically sets stoppedAt.
+ * PATCH — caregivers can mark doses on behalf of patients.
+ * Dose toggle: { doseIndex: 0, taken: true }
+ * Clinical:    { dosage, frequency, scheduleTime, status, startDate, endDate, isOngoing }
  */
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ patientId: string; medId: string }> }
 ) {
-  const caller = await requireRole("patient", "admin");
-  if (!caller) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const caller = await requireRole("caregiver", "admin");
+  if (!caller) return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
-  const { id } = await params;
+  const { patientId, medId } = await params;
   await connectToDatabase();
 
-  const patient = await Patient.findOne({ linkedUserId: caller.userId });
-  if (!patient) return NextResponse.json({ message: "Patient profile not found" }, { status: 404 });
+  if (!(await assertAssigned(caller.userId, patientId)))
+    return NextResponse.json({ message: "You are not assigned to this patient" }, { status: 403 });
 
   const body = await req.json();
   const safe: Record<string, any> = {};
 
-  // ── Dose toggle ──────────────────────────────────────────────────────────
+  // ── Dose toggle ───────────────────────────────────────────────────────────
   if (typeof body.doseIndex === "number" && typeof body.taken === "boolean") {
-    const current = await Medication.findOne({ _id: id, patientId: patient._id });
+    const current = await Medication.findOne({ _id: medId, patientId });
     if (!current) return NextResponse.json({ message: "Medication not found" }, { status: 404 });
     safe.takenDoses = toggleTakenIndex(current.takenDoses ?? null, todayStr(), body.doseIndex, body.taken);
   }
@@ -76,7 +79,7 @@ export async function PATCH(
   if (safe.isOngoing === true) safe.endDate = null;
 
   const med = await Medication.findOneAndUpdate(
-    { _id: id, patientId: patient._id },
+    { _id: medId, patientId },
     { $set: safe },
     { new: true }
   );
@@ -86,23 +89,23 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/medications/[id] — hard-deletes (accidental entry).
+ * DELETE — hard-deletes (accidental entry).
  * To soft-stop, PATCH with { status: "stopped" }.
  */
 export async function DELETE(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ patientId: string; medId: string }> }
 ) {
-  const caller = await requireRole("patient", "admin");
-  if (!caller) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  const caller = await requireRole("caregiver", "admin");
+  if (!caller) return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
-  const { id } = await params;
+  const { patientId, medId } = await params;
   await connectToDatabase();
 
-  const patient = await Patient.findOne({ linkedUserId: caller.userId });
-  if (!patient) return NextResponse.json({ message: "Patient profile not found" }, { status: 404 });
+  if (!(await assertAssigned(caller.userId, patientId)))
+    return NextResponse.json({ message: "You are not assigned to this patient" }, { status: 403 });
 
-  const deleted = await Medication.findOneAndDelete({ _id: id, patientId: patient._id });
+  const deleted = await Medication.findOneAndDelete({ _id: medId, patientId });
   if (!deleted) return NextResponse.json({ message: "Medication not found" }, { status: 404 });
   return NextResponse.json({ message: "Medication deleted" }, { status: 200 });
 }
