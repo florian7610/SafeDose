@@ -3,24 +3,19 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-<<<<<<< Updated upstream
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   FiAlertTriangle,
   FiBell,
   FiGrid,
   FiLogOut,
+  FiMenu,
   FiPackage,
   FiSearch,
   FiSettings,
   FiShield,
 } from "react-icons/fi";
 import { usePatientState } from "@/components/providers/app-state-provider";
-=======
-import { useEffect, useState } from "react";
-import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiMenu, FiPackage, FiSearch, FiSettings, FiShield } from "react-icons/fi";
-import { useAppState } from "@/components/providers/app-state-provider";
->>>>>>> Stashed changes
 
 const navItems = [
   { href: "/patient-dashboard",               label: "Dashboard",       icon: "grid"     },
@@ -148,11 +143,7 @@ export function AppShell({
         </div>
       </aside>
 
-<<<<<<< Updated upstream
-      <div style={{ height: "100vh", overflow: "hidden" }}>
-=======
       <div className="app-content-wrapper">
->>>>>>> Stashed changes
         <header className="app-topbar">
           <div className="topbar-left">
             <button 

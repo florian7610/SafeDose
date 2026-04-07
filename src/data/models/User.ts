@@ -18,13 +18,7 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-<<<<<<< Updated upstream
     password: { type: String, required: true },
-=======
-    password: {
-      type: String,
-      required: true,
-    },
     phoneNumber: {
       type: String,
       required: false,
@@ -37,7 +31,6 @@ const UserSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
->>>>>>> Stashed changes
     role: {
       type: String,
       enum: ["admin", "patient", "caregiver"],

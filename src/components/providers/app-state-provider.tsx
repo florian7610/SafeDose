@@ -241,21 +241,20 @@ export function AppStateProvider({ children }: PropsWithChildren) {
     );
   }, []);
 
-  const updateUserProfile = useCallback(
-    (payload: UpdateUserProfileRequestDto) => {
-      setUser((prev): UserEntity | null => {
-        if (!prev) return null;
-        return {
-          id:        prev.id,
-          firstName: payload.firstName.trim(),
-          lastName:  payload.lastName.trim(),
-          email:     payload.email.trim().toLowerCase(),
-          role:      payload.role,
-        };
-      });
-    },
-    []
-  );
+  const updateUserProfile = useCallback((payload: UpdateUserProfileRequestDto) => {
+    setUser((prev): UserEntity | null => {
+      if (!prev) return null;
+      return {
+        id: prev.id,
+        firstName: payload.firstName.trim(),
+        lastName: payload.lastName.trim(),
+        email: payload.email.trim().toLowerCase(),
+        phoneNumber: payload.phoneNumber.trim(),
+        address: payload.address.trim(),
+        role: payload.role,
+      };
+    });
+  }, []);
 
   const deleteAccount = useCallback(() => {
     setMedications([]);
@@ -265,9 +264,11 @@ export function AppStateProvider({ children }: PropsWithChildren) {
       return {
         ...prev,
         firstName: "Deleted",
-        lastName:  "User",
-        email:     "deleted@safedose.local",
-        role:      "patient",
+        lastName: "User",
+        email: "deleted@safedose.local",
+        phoneNumber: "000-000-0000",
+        address: "Deleted User Address",
+        role: "patient",
       };
     });
   }, []);
@@ -336,7 +337,6 @@ export function AppStateProvider({ children }: PropsWithChildren) {
       isAuthLoading,
       medications,
       interactions,
-<<<<<<< Updated upstream
       caregiverDashboard,
       isCaregiverLoading,
       toggleDose,
@@ -348,94 +348,6 @@ export function AppStateProvider({ children }: PropsWithChildren) {
       refreshCaregiverDashboard,
       addPatient,
       removePatient,
-=======
-      toggleDoseTaken: (medicationId: string) => {
-        const med = medications.find(m => m.id === medicationId);
-        if (!med) return;
-        const newTakenState = !med.takenToday;
-
-        setMedications((prev) =>
-          prev.map((m) =>
-            m.id === medicationId
-              ? { ...m, takenToday: newTakenState, updatedAt: buildIsoNow() }
-              : m,
-          ),
-        );
-
-        fetch(`/api/medications/${medicationId}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ takenToday: newTakenState }),
-        }).catch(err => console.error(err));
-      },
-      addMedication: async (payload: CreateMedicationRequestDto) => {
-        if (!user) return;
-        const tempId = `temp-${crypto.randomUUID().slice(0, 8)}`;
-        const newMed = {
-            id: tempId,
-            userId: user.id,
-            name: payload.name,
-            genericName: payload.genericName,
-            dosage: payload.dosage,
-            frequency: payload.frequency,
-            scheduleTime: payload.scheduleTime,
-            status: "active" as const,
-            rxcui: payload.rxcui,
-            takenToday: false,
-            createdAt: buildIsoNow(),
-            updatedAt: buildIsoNow(),
-        };
-
-        setMedications((prev) => [newMed, ...prev]);
-
-        try {
-          const res = await fetch("/api/medications", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (res.ok) {
-            const savedMed = await res.json();
-            setMedications(prev => prev.map(m => m.id === tempId ? savedMed : m));
-          }
-        } catch (err) {
-          console.error(err);
-          setMedications(prev => prev.filter(m => m.id !== tempId));
-        }
-      },
-      removeMedication: (medicationId: string) => {
-        setMedications((prev) => prev.filter((med) => med.id !== medicationId));
-        fetch(`/api/medications/${medicationId}`, { method: 'DELETE' }).catch(err => console.error(err));
-      },
-      updateUserProfile: (payload: UpdateUserProfileRequestDto) => {
-        setUser((prev): UserEntity | null => {
-          if (!prev) return null;
-          return {
-            id: prev.id,
-            firstName: payload.firstName.trim(),
-            lastName: payload.lastName.trim(),
-            email: payload.email.trim().toLowerCase(),
-            phoneNumber: payload.phoneNumber.trim(),
-            address: payload.address.trim(),
-            role: payload.role,
-          };
-        });
-      },
-      deleteAccount: () => {
-        setMedications([]);
-        setInteractions([]);
-        setUser((prev) => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            firstName: "Deleted",
-            lastName: "User",
-            email: "deleted@safedose.local",
-            role: "patient",
-          };
-        });
-      },
->>>>>>> Stashed changes
     }),
     [
       user,

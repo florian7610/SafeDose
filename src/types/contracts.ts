@@ -12,7 +12,8 @@ export interface UserEntity {
   firstName: string;
   lastName: string;
   email: string;
-<<<<<<< Updated upstream
+  phoneNumber: string;
+  address: string;
   role: "admin" | "patient" | "caregiver";
 }
 
@@ -28,11 +29,6 @@ export interface PatientEntity {
   hasAccount: boolean;
   notes: string;
   createdAt: string;
-=======
-  phoneNumber: string;
-  address: string;
-  role: "admin" | "patient";
->>>>>>> Stashed changes
 }
 
 export interface MedicationEntity {
@@ -109,12 +105,9 @@ export interface RegisterRequestDto {
   email: string;
   password: string;
   confirmPassword: string;
-<<<<<<< Updated upstream
-  role?: "patient" | "caregiver";
-=======
   phoneNumber: string;
   address: string;
->>>>>>> Stashed changes
+  role?: "patient" | "caregiver";
 }
 
 export interface CreateMedicationRequestDto {
@@ -124,12 +117,11 @@ export interface CreateMedicationRequestDto {
   frequency: string;
   scheduleTime: string;
   rxcui: string;
-<<<<<<< Updated upstream
   startDate: string;       // ISO date string e.g. "2024-01-10"
   endDate: string | null;  // null when isOngoing
   isOngoing: boolean;
-=======
 }
+
 
 export interface UpdateUserProfileRequestDto {
   firstName: string;
@@ -137,8 +129,7 @@ export interface UpdateUserProfileRequestDto {
   email: string;
   phoneNumber: string;
   address: string;
-  role: "admin" | "patient";
->>>>>>> Stashed changes
+  role: "admin" | "patient" | "caregiver";
 }
 
 export interface UpdateMedicationRequestDto {
@@ -150,13 +141,6 @@ export interface UpdateMedicationRequestDto {
   startDate?: string;
   endDate?: string | null;
   isOngoing?: boolean;
-}
-
-export interface UpdateUserProfileRequestDto {
-  firstName: string;
-  lastName: string;
-  email: string;
-  role: "admin" | "patient" | "caregiver";
 }
 
 /**

@@ -52,11 +52,6 @@ export default function LoginPage() {
     <div className="auth-wrapper">
       <section className="auth-left">
         <div className="auth-left-content">
-<<<<<<< Updated upstream
-          <div className="logo">Safe<span>Dose</span></div>
-          <h2>Welcome back.</h2>
-          <p>Sign in to review your medications, interactions, and adherence dashboard.</p>
-=======
           <div className="logo">
             Safe<span>Dose</span>
           </div>
@@ -67,8 +62,6 @@ export default function LoginPage() {
             Sign in to access your personalized medication dashboard, 
             review recent interactions, and stay on top of your daily schedule.
           </p>
-
->>>>>>> Stashed changes
           <div className="auth-trust">
             <div className="trust-item">
               <span className="trust-icon"><FiLock /></span>

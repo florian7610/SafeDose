@@ -12,12 +12,9 @@ interface RegisterFormValues {
   email: string;
   password: string;
   confirmPassword: string;
-<<<<<<< Updated upstream
-  role: "patient" | "caregiver";
-=======
   phoneNumber: string;
   address: string;
->>>>>>> Stashed changes
+  role: "patient" | "caregiver";
 }
 
 export default function RegisterPage() {
@@ -33,12 +30,9 @@ export default function RegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
-<<<<<<< Updated upstream
-      role: "patient",
-=======
       phoneNumber: "",
       address: "",
->>>>>>> Stashed changes
+      role: "patient",
     },
   });
 
@@ -59,12 +53,9 @@ export default function RegisterPage() {
           lastName: data.lastName,
           email: data.email,
           password: data.password,
-<<<<<<< Updated upstream
-          role: data.role,
-=======
           phoneNumber: data.phoneNumber,
           address: data.address,
->>>>>>> Stashed changes
+          role: data.role,
         }),
       });
 

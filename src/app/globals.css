@@ -41,14 +41,9 @@ body {
 
 body {
   font-family: var(--font-body), sans-serif;
-<<<<<<< Updated upstream
-  color: var(--gray800);
-  background: var(--gray50);
-  overflow: hidden;
-=======
   color: var(--gray-800);
   background: var(--gray-50);
->>>>>>> Stashed changes
+  overflow: hidden;
 }
 
 a {
@@ -562,12 +557,9 @@ a {
   background: var(--gray-50);
   color: var(--gray-800);
   outline: none;
-<<<<<<< Updated upstream
   appearance: none;
-=======
   transition: all 0.2s;
   display: block;
->>>>>>> Stashed changes
 }
 
 .form-grp input:focus,
