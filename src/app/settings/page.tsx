@@ -19,9 +19,17 @@ export default function SettingsPage() {
   const defaultValues = useMemo<UpdateUserProfileRequestDto>(
     () => ({
       firstName: user?.firstName ?? "",
+<<<<<<< Updated upstream
       lastName:  user?.lastName  ?? "",
       email:     user?.email     ?? "",
       role:      user?.role      ?? "patient",
+=======
+      lastName: user?.lastName ?? "",
+      email: user?.email ?? "",
+      phoneNumber: user?.phoneNumber ?? "",
+      address: user?.address ?? "",
+      role: user?.role ?? "patient",
+>>>>>>> Stashed changes
     }),
     [user]
   );
@@ -87,7 +95,34 @@ export default function SettingsPage() {
             </div>
 
             <div className="form-grp">
+<<<<<<< Updated upstream
               <label htmlFor="role">Account role</label>
+=======
+              <label htmlFor="phoneNumber">Phone Number</label>
+              <input
+                id="phoneNumber"
+                type="tel"
+                {...register("phoneNumber", {
+                  validate: (value) => value.trim().length >= 10 || "Valid phone number is required.",
+                })}
+              />
+              {errors.phoneNumber ? <p className="form-error">{errors.phoneNumber.message}</p> : null}
+            </div>
+
+            <div className="form-grp">
+              <label htmlFor="address">Address</label>
+              <input
+                id="address"
+                {...register("address", {
+                  validate: (value) => value.trim().length >= 5 || "Address is required.",
+                })}
+              />
+              {errors.address ? <p className="form-error">{errors.address.message}</p> : null}
+            </div>
+
+            <div className="form-grp">
+              <label htmlFor="role">Account Role</label>
+>>>>>>> Stashed changes
               <select id="role" className="settings-select" {...register("role")}>
                 <option value="patient">Patient</option>
                 <option value="admin">Admin</option>

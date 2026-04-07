@@ -12,7 +12,12 @@ interface RegisterFormValues {
   email: string;
   password: string;
   confirmPassword: string;
+<<<<<<< Updated upstream
   role: "patient" | "caregiver";
+=======
+  phoneNumber: string;
+  address: string;
+>>>>>>> Stashed changes
 }
 
 export default function RegisterPage() {
@@ -28,7 +33,12 @@ export default function RegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
+<<<<<<< Updated upstream
       role: "patient",
+=======
+      phoneNumber: "",
+      address: "",
+>>>>>>> Stashed changes
     },
   });
 
@@ -49,7 +59,12 @@ export default function RegisterPage() {
           lastName: data.lastName,
           email: data.email,
           password: data.password,
+<<<<<<< Updated upstream
           role: data.role,
+=======
+          phoneNumber: data.phoneNumber,
+          address: data.address,
+>>>>>>> Stashed changes
         }),
       });
 
@@ -74,22 +89,25 @@ export default function RegisterPage() {
             Safe<span>Dose</span>
           </div>
           <h2>
-            Take control of medication safety.
+            Take control of <br /> medication safety.
           </h2>
-          <p>Create an account to manage adherence tracking and safety monitoring across all pages.</p>
+          <p>
+            Join SafeDose today and experience a smarter way to manage your health. 
+            Track prescriptions, discover interactions, and never miss a dose again.
+          </p>
 
           <div className="auth-trust">
             <div className="trust-item">
               <span className="trust-icon"><FiPackage /></span>
-              Add medications quickly
+              <span><strong>Smart Inventory:</strong> Add medications in seconds</span>
             </div>
             <div className="trust-item">
               <span className="trust-icon"><FiAlertTriangle /></span>
-              Review interaction alerts
+              <span><strong>Safety Guard:</strong> Real-time interaction alerts</span>
             </div>
             <div className="trust-item">
               <span className="trust-icon"><FiCheckCircle /></span>
-              Track daily adherence
+              <span><strong>Adherence Pro:</strong> Detailed habit tracking</span>
             </div>
           </div>
         </div>
@@ -105,6 +123,7 @@ export default function RegisterPage() {
               <label htmlFor="firstName">First Name</label>
               <input
                 id="firstName"
+                placeholder="John"
                 {...register("firstName", {
                   validate: (value) => value.trim().length >= 2 || "First name is required.",
                 })}
@@ -115,6 +134,7 @@ export default function RegisterPage() {
               <label htmlFor="lastName">Last Name</label>
               <input
                 id="lastName"
+                placeholder="Doe"
                 {...register("lastName", {
                   validate: (value) => value.trim().length >= 2 || "Last name is required.",
                 })}
@@ -128,6 +148,7 @@ export default function RegisterPage() {
             <input
               id="email"
               type="email"
+              placeholder="john@example.com"
               {...register("email", {
                 validate: (value) => value.includes("@") || "Enter a valid email address.",
               })}
@@ -136,10 +157,36 @@ export default function RegisterPage() {
           </div>
 
           <div className="form-grp">
+            <label htmlFor="phoneNumber">Phone Number</label>
+            <input
+              id="phoneNumber"
+              type="tel"
+              placeholder="+1 (555) 123-4567"
+              {...register("phoneNumber", {
+                validate: (value) => value.trim().length >= 10 || "Valid phone number is required.",
+              })}
+            />
+            {errors.phoneNumber ? <p className="form-error">{errors.phoneNumber.message}</p> : null}
+          </div>
+
+          <div className="form-grp">
+            <label htmlFor="address">Address</label>
+            <input
+              id="address"
+              placeholder="123 Health St, Wellness City, NY 10001"
+              {...register("address", {
+                validate: (value) => value.trim().length >= 5 || "Address is required.",
+              })}
+            />
+            {errors.address ? <p className="form-error">{errors.address.message}</p> : null}
+          </div>
+
+          <div className="form-grp">
             <label htmlFor="password">Password</label>
             <input
               id="password"
               type="password"
+              placeholder="Min. 8 characters"
               {...register("password", {
                 minLength: {
                   value: 8,
@@ -155,6 +202,7 @@ export default function RegisterPage() {
             <input
               id="confirmPassword"
               type="password"
+              placeholder="Repeat password"
               {...register("confirmPassword", {
                 validate: (value) => value === getValues("password") || "Passwords must match.",
               })}

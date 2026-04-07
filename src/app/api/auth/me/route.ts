@@ -30,6 +30,8 @@ export async function GET() {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
         role: user.role ?? "patient",
       }
     }, { status: 200 });

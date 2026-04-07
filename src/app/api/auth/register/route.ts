@@ -7,6 +7,7 @@ import Patient from "@/data/models/Patient";
 
 export async function POST(req: Request) {
   try {
+<<<<<<< Updated upstream
     const { firstName, lastName, email, password, role } = await req.json();
 
     if (!firstName || !lastName || !email || !password) {
@@ -14,16 +15,33 @@ export async function POST(req: Request) {
         { message: "All fields are required" },
         { status: 400 }
       );
+=======
+    const { firstName, lastName, email, password, phoneNumber, address } = await req.json();
+
+    if (!firstName || !lastName || !email || !password || !phoneNumber || !address) {
+      return NextResponse.json({ message: "All fields are required" }, { status: 400 });
+>>>>>>> Stashed changes
     }
 
     await connectToDatabase();
 
+<<<<<<< Updated upstream
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
         { message: "User already exists" },
         { status: 409 }
       );
+=======
+    const existingUserByEmail = await User.findOne({ email });
+    if (existingUserByEmail) {
+      return NextResponse.json({ message: "Email already exists" }, { status: 409 });
+    }
+
+    const existingUserByPhone = await User.findOne({ phoneNumber });
+    if (existingUserByPhone) {
+      return NextResponse.json({ message: "Phone number already exists" }, { status: 409 });
+>>>>>>> Stashed changes
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -34,7 +52,13 @@ export async function POST(req: Request) {
       lastName,
       email,
       password: hashedPassword,
+<<<<<<< Updated upstream
       role: assignedRole,
+=======
+      phoneNumber,
+      address,
+      role: "patient",
+>>>>>>> Stashed changes
     });
 
     /**

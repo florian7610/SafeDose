@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+<<<<<<< Updated upstream
 import { useEffect } from "react";
 import {
   FiAlertTriangle,
@@ -15,6 +16,11 @@ import {
   FiShield,
 } from "react-icons/fi";
 import { usePatientState } from "@/components/providers/app-state-provider";
+=======
+import { useEffect, useState } from "react";
+import { FiAlertTriangle, FiBell, FiGrid, FiLogOut, FiMenu, FiPackage, FiSearch, FiSettings, FiShield } from "react-icons/fi";
+import { useAppState } from "@/components/providers/app-state-provider";
+>>>>>>> Stashed changes
 
 const navItems = [
   { href: "/patient-dashboard",               label: "Dashboard",       icon: "grid"     },
@@ -39,6 +45,8 @@ export function AppShell({
   const router   = useRouter();
   const { user, interactions, isAuthLoading } = usePatientState();
 
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   useEffect(() => {
     if (isAuthLoading) return;
     if (!user) { router.push("/login"); return; }
@@ -46,6 +54,11 @@ export function AppShell({
       router.push(user.role === "caregiver" ? "/caregiver-dashboard" : "/patient-dashboard");
     }
   }, [isAuthLoading, user, router, allowedRoles]);
+
+  // Close sidebar on navigation
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [pathname]);
 
   if (isAuthLoading || !user) {
     return (
@@ -59,8 +72,13 @@ export function AppShell({
   const initials   = `${user.firstName[0] ?? ""}${user.lastName[0] ?? ""}`;
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
+    <div className={`app-layout ${isMobileOpen ? 'sidebar-open' : ''}`}>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div className="sidebar-overlay" onClick={() => setIsMobileOpen(false)} />
+      )}
+
+      <aside className={`sidebar ${isMobileOpen ? 'active' : ''}`}>
         <div className="sb-logo">
           <div className="logo">Safe<span>Dose</span></div>
         </div>
@@ -130,11 +148,24 @@ export function AppShell({
         </div>
       </aside>
 
+<<<<<<< Updated upstream
       <div style={{ height: "100vh", overflow: "hidden" }}>
+=======
+      <div className="app-content-wrapper">
+>>>>>>> Stashed changes
         <header className="app-topbar">
-          <div className="topbar-title">
-            <h2>{title}</h2>
-            <p>{subtitle}</p>
+          <div className="topbar-left">
+            <button 
+              className="menu-toggle" 
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              aria-label="Toggle Menu"
+            >
+              <FiMenu />
+            </button>
+            <div className="topbar-title">
+              <h2>{title}</h2>
+              <p>{subtitle}</p>
+            </div>
           </div>
           <div className="topbar-right">
             <button className="notif-btn" type="button" aria-label="Notifications">
