@@ -7,13 +7,25 @@ import Patient from "@/data/models/Patient";
 
 export async function POST(req: Request) {
   try {
-    const { firstName, lastName, email, password, phoneNumber, address, role } = await req.json();
+    const {
+      firstName, lastName, email, password, phoneNumber, address, role,
+      dob, gender, qualification, experienceYears, specialization, availability, licenseId, languages
+    } = await req.json();
 
-    if (!firstName || !lastName || !email || !password || !phoneNumber || !address) {
+    if (!firstName || !lastName || !email || !password || !phoneNumber || !address || !dob || !gender) {
       return NextResponse.json(
-        { message: "All fields are required" },
+        { message: "All standard fields including Date of Birth and Gender are required." },
         { status: 400 }
       );
+    }
+
+    if (role === "caregiver") {
+      if (!qualification || !experienceYears || !specialization || !availability || !licenseId || !languages) {
+        return NextResponse.json(
+          { message: "All caregiver-specific fields are required for caregiver registration." },
+          { status: 400 }
+        );
+      }
     }
 
     await connectToDatabase();
@@ -45,6 +57,15 @@ export async function POST(req: Request) {
       phoneNumber,
       address,
       role: assignedRole,
+      isApproved: assignedRole === "patient",
+      dob,
+      gender,
+      qualification: assignedRole === "caregiver" ? qualification : undefined,
+      experienceYears: assignedRole === "caregiver" ? Number(experienceYears) : undefined,
+      specialization: assignedRole === "caregiver" ? specialization : undefined,
+      availability: assignedRole === "caregiver" ? availability : undefined,
+      licenseId: assignedRole === "caregiver" ? licenseId : undefined,
+      languages: assignedRole === "caregiver" ? languages : undefined,
     });
 
     /**

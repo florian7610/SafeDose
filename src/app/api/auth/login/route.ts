@@ -29,8 +29,16 @@ export async function POST(req: Request) {
     const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
     // Auto-promote to admin role if email matches ADMIN_EMAIL
     if (ADMIN_EMAIL && user.email === ADMIN_EMAIL.toLowerCase() && user.role !== "admin") {
-      await user.updateOne({ role: "admin" });
+      await user.updateOne({ role: "admin", isApproved: true });
       user.role = "admin";
+      user.isApproved = true;
+    }
+
+    if (!user.isApproved && user.role === "caregiver") {
+      return NextResponse.json(
+        { message: "Your Caregiver account is pending admin approval." },
+        { status: 403 }
+      );
     }
 
     const token = jwt.sign(

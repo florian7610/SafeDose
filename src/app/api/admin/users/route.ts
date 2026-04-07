@@ -39,6 +39,7 @@ export async function GET() {
         phoneNumber: u.phoneNumber,
         address: u.address,
         role: u.role ?? "patient",
+        isApproved: u.isApproved,
         medCount,
         createdAt: u.createdAt,
       };
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
       phoneNumber,
       address,
       role,
+      isApproved: true,
     });
 
     await newUser.save();

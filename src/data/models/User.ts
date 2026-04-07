@@ -36,6 +36,19 @@ const UserSchema = new mongoose.Schema(
       enum: ["admin", "patient", "caregiver"],
       default: "patient",
     },
+    isApproved: {
+      type: Boolean,
+      default: false,
+    },
+    dob: { type: Date, required: false },
+    gender: { type: String, enum: ["Male", "Female", "Other", "Prefer not to say"], required: false },
+    // Caregiver specific
+    qualification: { type: String, required: false },
+    experienceYears: { type: Number, required: false },
+    specialization: { type: String, required: false },
+    availability: { type: String, required: false },
+    licenseId: { type: String, required: false },
+    languages: { type: String, required: false },
   },
   { timestamps: true }
 );

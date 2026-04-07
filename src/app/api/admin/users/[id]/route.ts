@@ -26,21 +26,30 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   try {
     const { id } = await params;
-    const { role } = await req.json();
+    const { role, isApproved } = await req.json();
 
-    if (!["admin", "patient"].includes(role)) {
-      return NextResponse.json({ message: "Invalid role" }, { status: 400 });
+    const updateData: any = {};
+
+    if (role !== undefined) {
+      if (!["admin", "patient", "caregiver"].includes(role)) {
+        return NextResponse.json({ message: "Invalid role" }, { status: 400 });
+      }
+      updateData.role = role;
     }
 
-    if (admin.userId === id) {
+    if (isApproved !== undefined) {
+      updateData.isApproved = Boolean(isApproved);
+    }
+
+    if (admin.userId === id && role !== undefined) {
       return NextResponse.json({ message: "Cannot change your own role" }, { status: 400 });
     }
 
     await connectToDatabase();
-    const updated = await User.findByIdAndUpdate(id, { role }, { new: true }).select("-password");
+    const updated = await User.findByIdAndUpdate(id, updateData, { new: true }).select("-password");
     if (!updated) return NextResponse.json({ message: "User not found" }, { status: 404 });
 
-    return NextResponse.json({ id: updated._id.toString(), role: updated.role }, { status: 200 });
+    return NextResponse.json({ id: updated._id.toString(), role: updated.role, isApproved: updated.isApproved }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: "Failed to update user" }, { status: 500 });
   }

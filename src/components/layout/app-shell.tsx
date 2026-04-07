@@ -143,7 +143,7 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className="app-content-wrapper">
+      <div className="app-content-wrapper" style={{ height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <header className="app-topbar">
           <div className="topbar-left">
             <button 

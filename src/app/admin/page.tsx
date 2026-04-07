@@ -13,7 +13,8 @@ interface AdminUser {
   firstName: string;
   lastName: string;
   email: string;
-  role: "admin" | "patient";
+  role: "admin" | "patient" | "caregiver";
+  isApproved: boolean;
   medCount: number;
   createdAt: string;
 }
@@ -83,6 +84,24 @@ export default function AdminPage() {
     setTogglingId(null);
   };
 
+  const handleApprovalToggle = async (targetUser: AdminUser) => {
+    const newApprovalState = !targetUser.isApproved;
+    setTogglingId(targetUser.id);
+    const res = await fetch(`/api/admin/users/${targetUser.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isApproved: newApprovalState }),
+    });
+    if (res.ok) {
+      setUsers(prev => prev.map(u => u.id === targetUser.id ? { ...u, isApproved: newApprovalState } : u));
+      if (selectedUser?.id === targetUser.id) setSelectedUser(prev => prev ? { ...prev, isApproved: newApprovalState } : null);
+    } else {
+      const data = await res.json();
+      alert(data.message || "Failed to update approval status.");
+    }
+    setTogglingId(null);
+  };
+
   const openUserDetail = async (u: AdminUser) => {
     setSelectedUser(u);
     setMedsLoading(true);
@@ -136,7 +155,7 @@ export default function AdminPage() {
             style={{ width: "100%", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
             onClick={async () => {
               await fetch("/api/auth/logout", { method: "POST" });
-              router.push("/login");
+              window.location.href = "/login";
             }}
           >
             <span className="sb-icon"><FiLogOut /></span>
@@ -204,6 +223,7 @@ export default function AdminPage() {
                       <th>User</th>
                       <th>Email</th>
                       <th>Role</th>
+                      <th>Status</th>
                       <th>Medications</th>
                       <th>Joined</th>
                       <th style={{ textAlign: "center" }}>Actions</th>
@@ -228,8 +248,19 @@ export default function AdminPage() {
                         <td>
                           {u.role === "admin" ? (
                             <span className="admin-badge admin-badge-admin">Admin</span>
+                          ) : u.role === "caregiver" ? (
+                            <span className="admin-badge admin-badge-patient" style={{ background: "var(--navy-soft)", color: "var(--navy)" }}>Caregiver</span>
                           ) : (
                             <span className="admin-badge admin-badge-patient">Patient</span>
+                          )}
+                        </td>
+                        <td>
+                          {u.role === "patient" ? (
+                            <span className="admin-badge admin-badge-patient" style={{ background: "var(--gray-200)", color: "var(--gray-600)" }}>Approved</span>
+                          ) : u.isApproved ? (
+                            <span className="admin-badge admin-badge-patient">Approved</span>
+                          ) : (
+                            <span className="admin-badge admin-badge-admin" style={{ background: "var(--danger-soft)", color: "var(--danger)" }}>Pending</span>
                           )}
                         </td>
                         <td style={{ textAlign: "center" }}>{u.medCount}</td>
@@ -240,14 +271,25 @@ export default function AdminPage() {
                           <div style={{ display: "flex", gap: 6, justifyContent: "center" }}>
                             {u.id !== user.id && (
                               <>
+                                {u.role === "caregiver" && (
+                                  <button
+                                    className="icon-btn"
+                                    title={u.isApproved ? "Revoke Approval" : "Approve User"}
+                                    disabled={togglingId === u.id}
+                                    onClick={() => handleApprovalToggle(u)}
+                                    style={{ background: u.isApproved ? "var(--gray-200)" : "var(--teal-soft)", color: u.isApproved ? "var(--gray-600)" : "var(--teal)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", fontSize: 14 }}
+                                  >
+                                    {u.isApproved ? <FiUserX /> : <FiUserCheck />}
+                                  </button>
+                                )}
                                 <button
                                   className="icon-btn"
                                   title={u.role === "admin" ? "Demote to Patient" : "Promote to Admin"}
                                   disabled={togglingId === u.id}
                                   onClick={() => handleRoleToggle(u)}
-                                  style={{ background: u.role === "admin" ? "#fef3c7" : "var(--teal-soft)", color: u.role === "admin" ? "#92400e" : "var(--teal)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", fontSize: 14 }}
+                                  style={{ background: u.role === "admin" ? "#fef3c7" : "var(--navy-soft)", color: u.role === "admin" ? "#92400e" : "var(--navy)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", fontSize: 14 }}
                                 >
-                                  {u.role === "admin" ? <FiUserX /> : <FiUserCheck />}
+                                  {u.role === "admin" ? <FiShield /> : <FiShield />}
                                 </button>
                                 <button
                                   className="icon-btn icon-btn-del"
@@ -276,7 +318,7 @@ export default function AdminPage() {
                     ))}
                     {users.length === 0 && (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: "center", padding: "32px", color: "var(--gray-400)" }}>No users found.</td>
+                        <td colSpan={7} style={{ textAlign: "center", padding: "32px", color: "var(--gray-400)" }}>No users found.</td>
                       </tr>
                     )}
                   </tbody>

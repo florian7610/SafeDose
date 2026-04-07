@@ -34,9 +34,9 @@ export default function LoginPage() {
       if (res.ok) {
         const json = await res.json();
         const role = json.user?.role;
-        if (role === "admin")      router.push("/admin");
-        else if (role === "caregiver") router.push("/caregiver-dashboard");
-        else                       router.push("/patient-dashboard");
+        if (role === "admin")      window.location.href = "/admin";
+        else if (role === "caregiver") window.location.href = "/caregiver-dashboard";
+        else                       window.location.href = "/patient-dashboard";
       } else {
         const err = await res.json();
         setErrorMsg(err.message || "Invalid credentials");
@@ -52,9 +52,9 @@ export default function LoginPage() {
     <div className="auth-wrapper">
       <section className="auth-left">
         <div className="auth-left-content">
-          <div className="logo">
+          <Link href="/" className="logo" style={{ textDecoration: 'none' }}>
             Safe<span>Dose</span>
-          </div>
+          </Link>
           <h2>
             Welcome Back to <br /> Your Health Hub.
           </h2>
@@ -85,7 +85,7 @@ export default function LoginPage() {
           <p className="sub">Access your medication dashboard</p>
 
           <div className="form-grp">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">Email <span style={{ color: "#f87171" }}>*</span></label>
             <input
               id="email"
               type="email"
@@ -98,7 +98,7 @@ export default function LoginPage() {
           </div>
 
           <div className="form-grp">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Password <span style={{ color: "#f87171" }}>*</span></label>
             <input
               id="password"
               type="password"
